@@ -1,0 +1,6 @@
+{
+  "email": "Invalid email format",
+  "empty": "Field cannot be empty",
+  "passwordMatch": "Passwords do not match",
+  "userName": "Invalid format"
+}

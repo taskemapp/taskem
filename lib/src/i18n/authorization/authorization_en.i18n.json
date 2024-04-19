@@ -1,0 +1,13 @@
+{
+  "field": {
+    "email": "Email",
+    "userName": "Username",
+    "password": "Password",
+    "repeatPassword": "Repeat Password"
+  },
+  "accountCreated": "Account successfully created",
+  "login": "Log in",
+  "noAccount": "Don't have an account?",
+  "haveAccount": "Already have an account?",
+  "registration": "Register"
+}

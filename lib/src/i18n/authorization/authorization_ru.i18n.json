@@ -1,0 +1,13 @@
+{
+  "field": {
+    "email": "Эл. почта",
+    "userName": "Имя пользователя",
+    "password": "Пароль",
+    "repeatPassword": "Повторите пароль"
+  },
+  "accountCreated": "Аккаунт создан успешно",
+  "login": "Войти",
+  "noAccount": "Нет аккаунта?",
+  "haveAccount": "Есть аккаунт?",
+  "registration": "Зарегистрироваться"
+}
