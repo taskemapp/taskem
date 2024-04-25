@@ -55,7 +55,7 @@ abstract final class ScreenRoutes {
   ///[CreateTaskScreen] route
   static ScreenRoute get createTask => ScreenRoute(
         name: 'createTask',
-        path: '/team/:id/create',
+        path: 'create',
         goPath: 'create',
       );
 
