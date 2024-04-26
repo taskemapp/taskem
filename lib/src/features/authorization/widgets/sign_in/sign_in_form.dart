@@ -7,7 +7,8 @@ import 'package:taskem/src/core/helpers/snack_bar_service.dart';
 import 'package:taskem/src/core/widgets/custom_progress_indicator.dart';
 import 'package:taskem/src/core/widgets/custom_text_field.dart';
 import 'package:taskem/src/features/authorization/controllers/auth_bloc.dart';
-import 'package:taskem/src/routes.dart';
+import 'package:taskem/src/routes/routes.dart';
+import 'package:taskem/src/routes/screen_route_builder.dart';
 
 class SignInForm extends StatefulWidget {
   const SignInForm({
@@ -69,7 +70,9 @@ class _SignInFormState extends State<SignInForm> {
                 );
               }
               if (state is AuthSuccessLogin) {
-                context.go(ScreenRoutes.teams.path);
+                context.go(
+                  ScreenRouteBuilder().path(ScreenRoutes.teams).build(),
+                );
               }
             },
             builder: (context, state) {
@@ -110,7 +113,9 @@ class _SignInFormState extends State<SignInForm> {
               const SizedBox(width: 8),
               GestureDetector(
                 onTap: () {
-                  context.go(ScreenRoutes.signUp.path);
+                  context.go(
+                    ScreenRouteBuilder().path(ScreenRoutes.signUp).build(),
+                  );
                 },
                 child: Text(
                   translation.authorization.registration,

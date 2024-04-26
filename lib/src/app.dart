@@ -9,7 +9,7 @@ import 'package:taskem/src/common/theme/theme_provider.dart';
 import 'package:taskem/src/core/extensions/context_extension.dart';
 import 'package:taskem/src/features/initialization/model/dependencies.dart';
 import 'package:taskem/src/i18n/translations.g.dart';
-import 'package:taskem/src/routes.dart';
+import 'package:taskem/src/routes/routes.dart';
 
 class MyApp extends StatelessWidget {
   const MyApp({
@@ -30,13 +30,11 @@ class MyApp extends StatelessWidget {
         if (lightDynamic != null && darkDynamic != null) {
           lightColorScheme = lightDynamic.harmonized();
           lightColorScheme = lightColorScheme.copyWith(
-            background: const Color(0xffebebeb),
             surface: const Color(0xffebebeb),
           );
 
           darkColorScheme = darkDynamic.harmonized();
           darkColorScheme = darkColorScheme.copyWith(
-            background: const Color(0xff1a1a1a),
             surface: const Color(0xff1a1a1a),
           );
         } else {
@@ -45,7 +43,6 @@ class MyApp extends StatelessWidget {
           );
           darkColorScheme = ColorScheme.fromSeed(
             seedColor: seedColor,
-            background: const Color(0xff1a1a1a),
             surface: const Color(0xff1a1a1a),
             brightness: Brightness.dark,
           );
