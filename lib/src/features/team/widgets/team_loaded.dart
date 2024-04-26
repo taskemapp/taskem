@@ -3,7 +3,6 @@ part of '../screens/team_screen.dart';
 class _TeamLoaded extends StatelessWidget with PlatformCheck {
   const _TeamLoaded({
     required this.team,
-    super.key,
   });
 
   final TeamModel team;
@@ -21,7 +20,11 @@ class _TeamLoaded extends StatelessWidget with PlatformCheck {
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () {
           context.go(
-            '${ScreenRoutes.team.path}/${team.id}/create',
+            ScreenRouteBuilder()
+                .path(ScreenRoutes.team)
+                .param(team.id)
+                .path(ScreenRoutes.createTask)
+                .build(),
             extra: team.members,
           );
         },
@@ -103,7 +106,6 @@ class _TeamTaskCard extends StatelessWidget with PlatformCheck {
   const _TeamTaskCard({
     required this.team,
     required this.task,
-    super.key,
     this.canAssign = true,
   });
 

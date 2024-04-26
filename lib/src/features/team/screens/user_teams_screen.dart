@@ -10,7 +10,8 @@ import 'package:taskem/src/features/team/controller/teams/team_bloc.dart';
 import 'package:taskem/src/features/team/controller/user_teams/user_team_bloc.dart';
 import 'package:taskem/src/features/team/widgets/loading_widget.dart';
 import 'package:taskem/src/features/team/widgets/team_card.dart';
-import 'package:taskem/src/routes.dart';
+import 'package:taskem/src/routes/routes.dart';
+import 'package:taskem/src/routes/screen_route_builder.dart';
 
 class UserTeamScreen extends StatefulWidget {
   const UserTeamScreen({required this.onJoinPressed, super.key});
@@ -69,7 +70,10 @@ class _UserTeamScreenState extends State<UserTeamScreen>
                               final team = teams[index];
                               return TeamCard(
                                 onCardPressed: () => context.push(
-                                  '${ScreenRoutes.team.path}/${team.id}',
+                                  ScreenRouteBuilder()
+                                      .path(ScreenRoutes.team)
+                                      .param(team.id)
+                                      .build(),
                                 ),
                                 team: team,
                               );

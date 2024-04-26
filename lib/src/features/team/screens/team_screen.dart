@@ -19,7 +19,8 @@ import 'package:taskem/src/features/team/controller/specific_team/specific_team_
 import 'package:taskem/src/features/team/controller/team_task/team_task_bloc.dart';
 import 'package:taskem/src/features/team/models/team_model.dart';
 import 'package:taskem/src/features/team/widgets/loading_widget.dart';
-import 'package:taskem/src/routes.dart';
+import 'package:taskem/src/routes/routes.dart';
+import 'package:taskem/src/routes/screen_route_builder.dart';
 
 part '../widgets/assign_task_form.dart';
 part '../widgets/backlog_widget.dart';

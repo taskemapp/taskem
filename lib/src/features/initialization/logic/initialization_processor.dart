@@ -1,4 +1,3 @@
-import 'package:flutter/services.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:grpc/grpc.dart';
 import 'package:talker_flutter/talker_flutter.dart';
@@ -45,19 +44,20 @@ final class InitializationProcessor {
       ),
     );
 
-    final byte = await rootBundle.load(_environmentStore.certPath);
+    // final byte = await rootBundle.load(_environmentStore.certPath);
 
     final channel = ClientChannel(
       _environmentStore.host,
       port: _environmentStore.port,
       options: ChannelOptions(
-        credentials: ChannelCredentials.secure(
-          certificates: byte.buffer.asUint8List(),
-          onBadCertificate: (certificate, host) {
-            _talker.error('Bad certificate: $certificate');
-            return false;
-          },
-        ),
+        credentials: ChannelCredentials.insecure(),
+        // credentials: ChannelCredentials.secure(
+        //   certificates: byte.buffer.asUint8List(),
+        //   onBadCertificate: (certificate, host) {
+        //     _talker.error('Bad certificate: $certificate');
+        //     return false;
+        //   },
+        // ),
         keepAlive: const ClientKeepAliveOptions(
           pingInterval: Duration(seconds: 1),
         ),

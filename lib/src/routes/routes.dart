@@ -11,6 +11,8 @@ import 'package:taskem/src/features/shared/model/user_info_model.dart';
 import 'package:taskem/src/features/task/screens/create_task_screen.dart';
 import 'package:taskem/src/features/team/screens/root_teams_screen.dart';
 import 'package:taskem/src/features/team/screens/team_screen.dart';
+import 'package:taskem/src/routes/screen_route.dart';
+import 'package:taskem/src/routes/screen_route_builder.dart';
 
 /// [ScreenRoutes] class defines static getters to retrieve instances
 /// of the [ScreenRoute].
@@ -20,35 +22,35 @@ abstract final class ScreenRoutes {
   ///[SignInScreen] route
   static ScreenRoute get signIn => ScreenRoute(
         name: 'signIn',
-        path: '/signIn',
+        path: 'signIn',
         goPath: '/signIn',
       );
 
   ///[SignUpScreen] route
   static ScreenRoute get signUp => ScreenRoute(
         name: 'signUp',
-        path: '/signUp',
+        path: 'signUp',
         goPath: '/signUp',
       );
 
   ///[HomeScreen] route
   static ScreenRoute get home => ScreenRoute(
         name: 'home',
-        path: '/home',
+        path: 'home',
         goPath: '/home',
       );
 
   ///[RootTeamsScreen] route
   static ScreenRoute get teams => ScreenRoute(
         name: 'teams',
-        path: '/teams',
+        path: 'teams',
         goPath: '/teams',
       );
 
   ///[TeamScreen] route
   static ScreenRoute get team => ScreenRoute(
         name: 'team',
-        path: '/teams',
+        path: 'teams',
         goPath: ':id',
       );
 
@@ -65,12 +67,12 @@ abstract final class ScreenRoutes {
 
   static final _router = GoRouter(
     debugLogDiagnostics: true,
-    initialLocation: ScreenRoutes.signIn.path,
+    initialLocation: ScreenRoutes.signIn.goPath,
     routes: [
       GoRoute(
         path: '/',
         redirect: (context, state) {
-          return ScreenRoutes.home.path;
+          return ScreenRouteBuilder().path(ScreenRoutes.home).build();
         },
       ),
       StatefulShellRoute.indexedStack(
@@ -240,24 +242,4 @@ abstract final class ScreenRoutes {
       ),
     ],
   );
-}
-
-/// The [ScreenRoute] class represents a model
-/// for defining routes in the application.
-final class ScreenRoute {
-  ///Constructor
-  ScreenRoute({
-    required this.name,
-    required this.path,
-    required this.goPath,
-  });
-
-  ///Route name
-  final String name;
-
-  ///Route path
-  final String path;
-
-  ///Path in [GoRoute] path
-  final String goPath;
 }

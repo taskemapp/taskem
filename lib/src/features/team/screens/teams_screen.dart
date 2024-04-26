@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:taskem/src/core/extensions/context_extension.dart';
 import 'package:taskem/src/core/helpers/dimension.dart';
 import 'package:taskem/src/core/helpers/platform_check_mixin.dart';
 import 'package:taskem/src/core/widgets/info_text.dart';
@@ -25,7 +24,6 @@ class _TeamsScreenState extends State<TeamsScreen>
   @override
   Widget build(BuildContext context) {
     super.build(context);
-    final theme = context.theme;
 
     return Padding(
       padding: EdgeInsets.symmetric(
@@ -39,31 +37,30 @@ class _TeamsScreenState extends State<TeamsScreen>
         },
         builder: (context, state) {
           return switch (state) {
-            TeamsLoaded(teams: final teams) => teams.isNotEmpty
-                ? RefreshIndicator(
-                    onRefresh: () async {
-                      context.read<TeamBloc>().add(const TeamEvent.getTeams());
-                    },
-                    child: CustomScrollView(
-                      slivers: [
-                        SliverList.builder(
-                          itemCount: teams.length,
-                          itemBuilder: (context, index) {
-                            final team = teams[index];
-                            return TeamCard(
-                              team: team,
-                              canJoin: true,
-                            );
-                          },
-                        ),
-                      ],
-                    ).animate().fade(),
-                  )
-                : const Center(
-                    child: InfoText(
-                      title: 'Нет команд',
+            TeamsLoaded(teams: final teams) => RefreshIndicator(
+                onRefresh: () async {
+                  context.read<TeamBloc>().add(const TeamEvent.getTeams());
+                },
+                child: CustomScrollView(
+                  slivers: [
+                    SliverList.builder(
+                      itemCount: teams.length,
+                      itemBuilder: (context, index) {
+                        final team = teams[index];
+                        return TeamCard(
+                          team: team,
+                          canJoin: true,
+                        );
+                      },
                     ),
-                  ).animate().fade(),
+                  ],
+                ).animate().fade(),
+              ),
+            TeamsEmpty() => const Center(
+                child: InfoText(
+                  title: 'Нет команд',
+                ),
+              ).animate().fade(),
             TeamError() => Center(
                 child: TryAgainButton(
                   onPressed: () =>

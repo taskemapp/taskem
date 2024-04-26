@@ -7,7 +7,8 @@ import 'package:taskem/src/core/helpers/snack_bar_service.dart';
 import 'package:taskem/src/core/widgets/custom_progress_indicator.dart';
 import 'package:taskem/src/core/widgets/custom_text_field.dart';
 import 'package:taskem/src/features/authorization/controllers/auth_bloc.dart';
-import 'package:taskem/src/routes.dart';
+import 'package:taskem/src/routes/routes.dart';
+import 'package:taskem/src/routes/screen_route_builder.dart';
 
 class SignUpForm extends StatefulWidget {
   const SignUpForm({
@@ -119,7 +120,9 @@ class _SignUpFormState extends State<SignUpForm> {
                 );
               }
               if (state is AuthSuccessSignUp) {
-                context.go(ScreenRoutes.signIn.path);
+                context.go(
+                  ScreenRouteBuilder().path(ScreenRoutes.signIn).build(),
+                );
                 SnackBarService.info(
                   context,
                   translation.authorization.accountCreated,
@@ -165,7 +168,9 @@ class _SignUpFormState extends State<SignUpForm> {
               const SizedBox(width: 8),
               GestureDetector(
                 onTap: () {
-                  context.go(ScreenRoutes.signIn.path);
+                  context.go(
+                    ScreenRouteBuilder().path(ScreenRoutes.signIn).build(),
+                  );
                 },
                 child: Text(
                   translation.authorization.login,
