@@ -18,7 +18,7 @@ class InfoText extends StatelessWidget {
         Dimension.borderRadius,
       ),
       child: ColoredBox(
-        color: theme.colorScheme.tertiaryContainer,
+        color: theme.colorScheme.onTertiary,
         child: Padding(
           padding: const EdgeInsets.all(12),
           child: Text(
