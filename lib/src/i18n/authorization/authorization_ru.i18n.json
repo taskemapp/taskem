@@ -5,6 +5,9 @@
     "password": "Пароль",
     "repeatPassword": "Повторите пароль"
   },
+  "error": {
+    "wrongPasswordOrEmail": "Неверный пароль или эл. почта"
+  },
   "accountCreated": "Аккаунт создан успешно",
   "login": "Войти",
   "noAccount": "Нет аккаунта?",

@@ -10,6 +10,8 @@ sealed class TaskState {
 
   const factory TaskState.created() = TaskCreated;
 
+  const factory TaskState.permissionDenied() = TaskPermissionDenied;
+
   const factory TaskState.assigned() = TaskAssigned;
 
   const factory TaskState.loaded({required List<TaskModel> tasks}) = TaskLoaded;
@@ -29,6 +31,10 @@ final class TaskCreated extends TaskState {
 
 final class TaskAssigned extends TaskState {
   const TaskAssigned();
+}
+
+final class TaskPermissionDenied extends TaskState {
+  const TaskPermissionDenied();
 }
 
 final class TaskLoaded extends TaskState {

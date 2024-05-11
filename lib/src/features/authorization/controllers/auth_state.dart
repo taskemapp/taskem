@@ -9,7 +9,7 @@ sealed class AuthState {
   const factory AuthState.loading() = AuthLoading;
 
   const factory AuthState.successLogin({
-    required String sessionId,
+    required UserData userData,
   }) = AuthSuccessLogin;
 
   const factory AuthState.successSignUp({
@@ -31,15 +31,10 @@ class AuthLoading extends AuthState {
 
 class AuthSuccessLogin extends AuthState {
   const AuthSuccessLogin({
-    required this.sessionId,
+    required this.userData,
   });
 
-  final String sessionId;
-
-  @override
-  String toString() {
-    return 'AuthSuccessLogin {sessionId: $sessionId}';
-  }
+  final UserData userData;
 }
 
 class AuthSuccessSignUp extends AuthState {

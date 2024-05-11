@@ -13,18 +13,23 @@ class InfoText extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = context.theme;
-    return ClipRRect(
-      borderRadius: BorderRadius.circular(
-        Dimension.borderRadius,
-      ),
-      child: ColoredBox(
-        color: theme.colorScheme.onTertiary,
-        child: Padding(
-          padding: const EdgeInsets.all(12),
-          child: Text(
-            title,
-            style: theme.textTheme.bodyLarge?.copyWith(
-              color: theme.colorScheme.tertiary,
+    final borderRadius = BorderRadius.circular(
+      Dimension.borderRadius,
+    );
+    return Material(
+      elevation: 1,
+      borderRadius: borderRadius,
+      child: ClipRRect(
+        borderRadius: borderRadius,
+        child: ColoredBox(
+          color: theme.colorScheme.onTertiary,
+          child: Padding(
+            padding: const EdgeInsets.all(12),
+            child: Text(
+              title,
+              style: theme.textTheme.bodyLarge?.copyWith(
+                color: theme.colorScheme.tertiary,
+              ),
             ),
           ),
         ),

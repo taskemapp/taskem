@@ -7,6 +7,9 @@ sealed class TeamTaskEvent {
   const factory TeamTaskEvent.getTasks({required String teamId}) =
       _GetTeamTasksEvent;
 
+  const factory TeamTaskEvent.complete({required String taskId}) =
+      _CompleteTaskEvent;
+
   const factory TeamTaskEvent.assign({
     required String taskId,
     required String teamId,
@@ -30,4 +33,10 @@ final class _GetTeamTasksEvent extends TeamTaskEvent {
   const _GetTeamTasksEvent({required this.teamId});
 
   final String teamId;
+}
+
+final class _CompleteTaskEvent extends TeamTaskEvent {
+  const _CompleteTaskEvent({required this.taskId});
+
+  final String taskId;
 }

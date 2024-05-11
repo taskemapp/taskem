@@ -23,6 +23,7 @@ class CustomTextField extends StatefulWidget {
     this.suffix,
     this.onTap,
     this.padding,
+    this.autofillHints,
   });
 
   factory CustomTextField.password({
@@ -34,6 +35,7 @@ class CustomTextField extends StatefulWidget {
     TextEditingController? controller,
     List<TextInputFormatter>? inputFormatters,
     String? Function(String value)? validator,
+    Iterable<String>? autofillHints,
     TextInputType? keyboardType,
   }) {
     return CustomTextField(
@@ -45,6 +47,10 @@ class CustomTextField extends StatefulWidget {
       maxLines: maxLines,
       controller: controller,
       inputFormatters: inputFormatters,
+      autofillHints: autofillHints ??
+          const [
+            AutofillHints.password,
+          ],
       validator: validator,
       keyboardType: keyboardType,
     );
@@ -58,6 +64,7 @@ class CustomTextField extends StatefulWidget {
   final int? maxLines;
   final TextEditingController? controller;
   final List<TextInputFormatter>? inputFormatters;
+  final Iterable<String>? autofillHints;
   final String? Function(String value)? validator;
   final VoidCallback? onTap;
   final TextInputType? keyboardType;
@@ -117,6 +124,7 @@ class _CustomTextFieldState extends State<CustomTextField> with PlatformCheck {
           valueListenable: showPassword,
           builder: (context, value, child) {
             return TextFormField(
+              autofillHints: widget.autofillHints,
               cursorHeight: isCupertino ? 16 : null,
               maxLines: widget.maxLines ?? 1,
               onTap: widget.onTap,

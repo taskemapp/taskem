@@ -5,10 +5,12 @@ class _BacklogWidget extends StatefulWidget {
     required this.tasks,
     required this.team,
     super.key,
+    this.tabController,
   });
 
   final List<TaskModel> tasks;
   final TeamModel team;
+  final TabController? tabController;
 
   @override
   State<_BacklogWidget> createState() => _BacklogWidgetState();
@@ -45,10 +47,11 @@ class _BacklogWidgetState extends State<_BacklogWidget>
               const TaskStatus.inProgress().toString(),
         )
         .toList();
-    controller = TabController(
-      length: 3,
-      vsync: this,
-    );
+    controller = widget.tabController ??
+        TabController(
+          length: 3,
+          vsync: this,
+        );
   }
 
   @override
@@ -77,6 +80,7 @@ class _BacklogWidgetState extends State<_BacklogWidget>
                 ),
                 Expanded(
                   child: TabBarView(
+                    physics: const NeverScrollableScrollPhysics(),
                     controller: controller,
                     children: [
                       if (backlogTasks.isNotEmpty)
@@ -85,9 +89,14 @@ class _BacklogWidgetState extends State<_BacklogWidget>
                           padding: const EdgeInsets.only(bottom: 80),
                           itemBuilder: (context, index) {
                             final task = backlogTasks[index];
-                            return _TeamTaskCard(
-                              team: widget.team,
-                              task: task,
+                            return Padding(
+                              padding: const EdgeInsets.all(8).copyWith(
+                                bottom: 0,
+                              ),
+                              child: _TeamTaskCard(
+                                team: widget.team,
+                                task: task,
+                              ),
                             );
                           },
                         ).animate().fade()
@@ -101,9 +110,38 @@ class _BacklogWidgetState extends State<_BacklogWidget>
                           padding: const EdgeInsets.only(bottom: 80),
                           itemBuilder: (context, index) {
                             final task = sprintTasks[index];
-                            return _TeamTaskCard(
-                              team: widget.team,
-                              task: task,
+                            return Slidable(
+                              endActionPane: ActionPane(
+                                extentRatio: 0.15,
+                                motion: const ScrollMotion(),
+                                children: [
+                                  SlidableAction(
+                                    onPressed: (context) {
+                                      context.read<TeamTaskBloc>().add(
+                                            TeamTaskEvent.complete(
+                                              taskId: task.id,
+                                            ),
+                                          );
+                                    },
+                                    backgroundColor:
+                                        theme.colorScheme.tertiaryContainer,
+                                    foregroundColor:
+                                        theme.colorScheme.onTertiaryContainer,
+                                    icon: isCupertino
+                                        ? CupertinoIcons.check_mark_circled
+                                        : Icons.check_circle_rounded,
+                                  ),
+                                ],
+                              ),
+                              child: Padding(
+                                padding: const EdgeInsets.all(8).copyWith(
+                                  bottom: 0,
+                                ),
+                                child: _TeamTaskCard(
+                                  team: widget.team,
+                                  task: task,
+                                ),
+                              ),
                             );
                           },
                         ).animate().fade()
@@ -116,10 +154,15 @@ class _BacklogWidgetState extends State<_BacklogWidget>
                         padding: const EdgeInsets.only(bottom: 80),
                         itemBuilder: (context, index) {
                           final task = widget.tasks[index];
-                          return _TeamTaskCard(
-                            canAssign: false,
-                            team: widget.team,
-                            task: task,
+                          return Padding(
+                            padding: const EdgeInsets.all(8).copyWith(
+                              bottom: 0,
+                            ),
+                            child: _TeamTaskCard(
+                              canAssign: false,
+                              team: widget.team,
+                              task: task,
+                            ),
                           );
                         },
                       ).animate().fade(),

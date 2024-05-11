@@ -13,7 +13,12 @@ abstract final class SnackBarService {
     // final height =
     //     (size.height * 0.023 < 20 ? 20 : size.height * 0.023).toDouble();
     ScaffoldMessenger.of(context).showSnackBar(
+      snackBarAnimationStyle: AnimationStyle(
+        curve: Curves.easeInOut,
+        duration: const Duration(milliseconds: 300),
+      ),
       SnackBar(
+        dismissDirection: DismissDirection.horizontal,
         backgroundColor: theme.colorScheme.errorContainer,
         content: ConstrainedBox(
           constraints: BoxConstraints(
@@ -58,14 +63,16 @@ abstract final class SnackBarService {
 
   static void info(
     BuildContext context,
-    String message,
-  ) {
+    String message, {
+    int? lines,
+  }) {
     final theme = context.theme;
 
     // final height =
     //     (size.height * 0.023 < 20 ? 20 : size.height * 0.023).toDouble();
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
+        dismissDirection: DismissDirection.horizontal,
         backgroundColor: theme.colorScheme.secondaryContainer,
         content: ConstrainedBox(
           constraints: BoxConstraints(
@@ -79,8 +86,8 @@ abstract final class SnackBarService {
               Expanded(
                 child: Text(
                   message,
-                  maxLines: 1,
-                  softWrap: false,
+                  maxLines: lines ?? 1,
+                  softWrap: lines != null && lines > 1,
                   overflow: TextOverflow.fade,
                   style: theme.textTheme.bodyMedium,
                 ),

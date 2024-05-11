@@ -51,138 +51,146 @@ class _SignUpFormState extends State<SignUpForm> {
 
     return Form(
       key: _formKey,
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          CustomTextField(
-            title: translation.authorization.field.email,
-            controller: widget.emailController,
-            keyboardType: TextInputType.emailAddress,
-            maxLength: 32,
-            validator: (value) {
-              if (!TextFieldValidators.email(value)) {
-                return translation.validator.email;
-              }
-              return null;
-            },
-          ),
-          const SizedBox(
-            height: 12,
-          ),
-          CustomTextField(
-            title: translation.authorization.field.userName,
-            controller: widget.userNameController,
-            keyboardType: TextInputType.text,
-            validator: (value) {
-              if (!TextFieldValidators.userName(value)) {
-                return translation.validator.userName;
-              }
-              return null;
-            },
-            maxLength: 32,
-          ),
-          const SizedBox(
-            height: 12,
-          ),
-          CustomTextField.password(
-            title: translation.authorization.field.password,
-            controller: widget.passwordController,
-            keyboardType: TextInputType.visiblePassword,
-            maxLength: 32,
-            validator: (value) => passwordValidate(
-              value,
-              translation.validator.empty,
-              translation.validator.passwordMatch,
+      child: AutofillGroup(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            CustomTextField(
+              title: translation.authorization.field.email,
+              controller: widget.emailController,
+              keyboardType: TextInputType.emailAddress,
+              autofillHints: const [
+                AutofillHints.email,
+              ],
+              maxLength: 32,
+              validator: (value) {
+                if (!TextFieldValidators.email(value)) {
+                  return translation.validator.email;
+                }
+                return null;
+              },
             ),
-          ),
-          const SizedBox(
-            height: 12,
-          ),
-          CustomTextField.password(
-            title: translation.authorization.field.repeatPassword,
-            controller: widget.repeatPasswordController,
-            keyboardType: TextInputType.visiblePassword,
-            validator: (value) => passwordValidate(
-              value,
-              translation.validator.empty,
-              translation.validator.passwordMatch,
+            const SizedBox(
+              height: 12,
             ),
-            maxLength: 32,
-          ),
-          const SizedBox(height: 24),
-          BlocConsumer<AuthBloc, AuthState>(
-            listener: (BuildContext context, AuthState state) {
-              if (state is AuthError) {
-                SnackBarService.error(
-                  context,
-                  state.errorMessage,
-                );
-              }
-              if (state is AuthSuccessSignUp) {
-                context.go(
-                  ScreenRouteBuilder().path(ScreenRoutes.signIn).build(),
-                );
-                SnackBarService.info(
-                  context,
-                  translation.authorization.accountCreated,
-                );
-              }
-            },
-            builder: (context, state) {
-              return switch (state) {
-                AuthLoading() => const FilledButton.tonal(
-                    onPressed: null,
-                    child: CustomProgressIndicator(),
-                  ),
-                _ => FilledButton.tonal(
-                    onPressed: () {
-                      if (_formKey.currentState!.validate()) {
-                        authBloc.add(
-                          AuthEvent.signUp(
-                            email: widget.emailController.text,
-                            userName: widget.emailController.text,
-                            password: widget.passwordController.text,
-                          ),
-                        );
-                      }
-                    },
-                    child: Text(
-                      translation.authorization.registration,
-                      textAlign: TextAlign.center,
-                    ),
-                  ),
-              };
-            },
-          ),
-          const SizedBox(height: 12),
-          Wrap(
-            crossAxisAlignment: WrapCrossAlignment.center,
-            alignment: WrapAlignment.center,
-            children: [
-              Text(
-                translation.authorization.haveAccount,
-                textAlign: TextAlign.center,
-                style: theme.textTheme.labelMedium,
+            CustomTextField(
+              title: translation.authorization.field.userName,
+              controller: widget.userNameController,
+              keyboardType: TextInputType.name,
+              autofillHints: const [
+                AutofillHints.username,
+              ],
+              validator: (value) {
+                if (!TextFieldValidators.userName(value)) {
+                  return translation.validator.userName;
+                }
+                return null;
+              },
+              maxLength: 32,
+            ),
+            const SizedBox(
+              height: 12,
+            ),
+            CustomTextField.password(
+              title: translation.authorization.field.password,
+              controller: widget.passwordController,
+              keyboardType: TextInputType.visiblePassword,
+              maxLength: 32,
+              validator: (value) => passwordValidate(
+                value,
+                translation.validator.empty,
+                translation.validator.passwordMatch,
               ),
-              const SizedBox(width: 8),
-              GestureDetector(
-                onTap: () {
+            ),
+            const SizedBox(
+              height: 12,
+            ),
+            CustomTextField.password(
+              title: translation.authorization.field.repeatPassword,
+              controller: widget.repeatPasswordController,
+              keyboardType: TextInputType.visiblePassword,
+              validator: (value) => passwordValidate(
+                value,
+                translation.validator.empty,
+                translation.validator.passwordMatch,
+              ),
+              maxLength: 32,
+            ),
+            const SizedBox(height: 24),
+            BlocConsumer<AuthBloc, AuthState>(
+              listener: (BuildContext context, AuthState state) {
+                if (state is AuthError) {
+                  SnackBarService.error(
+                    context,
+                    state.errorMessage,
+                  );
+                }
+                if (state is AuthSuccessSignUp) {
                   context.go(
                     ScreenRouteBuilder().path(ScreenRoutes.signIn).build(),
                   );
-                },
-                child: Text(
-                  translation.authorization.login,
+                  SnackBarService.info(
+                    context,
+                    translation.authorization.accountCreated,
+                  );
+                }
+              },
+              builder: (context, state) {
+                return switch (state) {
+                  AuthLoading() => const FilledButton.tonal(
+                      onPressed: null,
+                      child: CustomProgressIndicator(),
+                    ),
+                  _ => FilledButton.tonal(
+                      onPressed: () {
+                        if (_formKey.currentState!.validate()) {
+                          authBloc.add(
+                            AuthEvent.signUp(
+                              email: widget.emailController.text,
+                              userName: widget.userNameController.text,
+                              password: widget.passwordController.text,
+                            ),
+                          );
+                        }
+                      },
+                      child: Text(
+                        translation.authorization.registration,
+                        textAlign: TextAlign.center,
+                      ),
+                    ),
+                };
+              },
+            ),
+            const SizedBox(height: 12),
+            Wrap(
+              crossAxisAlignment: WrapCrossAlignment.center,
+              alignment: WrapAlignment.center,
+              children: [
+                Text(
+                  translation.authorization.haveAccount,
                   textAlign: TextAlign.center,
-                  style: theme.textTheme.bodySmall?.copyWith(
-                    color: theme.colorScheme.surfaceTint,
+                  style: theme.textTheme.labelMedium,
+                ),
+                const SizedBox(width: 8),
+                GestureDetector(
+                  onTap: () {
+                    context.go(
+                      ScreenRouteBuilder().path(ScreenRoutes.signIn).build(),
+                    );
+                  },
+                  child: Text(
+                    translation.authorization.login,
+                    textAlign: TextAlign.center,
+                    style: theme.textTheme.bodySmall?.copyWith(
+                      color: theme.colorScheme.surfaceTint,
+                    ),
                   ),
                 ),
-              ),
-            ],
-          ),
-        ],
+              ],
+            ),
+          ],
+        ),
       ),
     );
   }

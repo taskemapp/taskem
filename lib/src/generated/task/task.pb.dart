@@ -331,6 +331,67 @@ class AssignTaskRequest extends $pb.GeneratedMessage {
   void clearUserId() => clearField(2);
 }
 
+class CompleteTaskRequest extends $pb.GeneratedMessage {
+  factory CompleteTaskRequest({
+    $core.String? taskId,
+  }) {
+    final $result = create();
+    if (taskId != null) {
+      $result.taskId = taskId;
+    }
+    return $result;
+  }
+  CompleteTaskRequest._() : super();
+  factory CompleteTaskRequest.fromBuffer($core.List<$core.int> i,
+          [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) =>
+      create()..mergeFromBuffer(i, r);
+  factory CompleteTaskRequest.fromJson($core.String i,
+          [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) =>
+      create()..mergeFromJson(i, r);
+
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo(
+      _omitMessageNames ? '' : 'CompleteTaskRequest',
+      package: const $pb.PackageName(_omitMessageNames ? '' : 'task'),
+      createEmptyInstance: create)
+    ..aOS(1, _omitFieldNames ? '' : 'taskId')
+    ..hasRequiredFields = false;
+
+  @$core.Deprecated('Using this can add significant overhead to your binary. '
+      'Use [GeneratedMessageGenericExtensions.deepCopy] instead. '
+      'Will be removed in next major version')
+  CompleteTaskRequest clone() => CompleteTaskRequest()..mergeFromMessage(this);
+  @$core.Deprecated('Using this can add significant overhead to your binary. '
+      'Use [GeneratedMessageGenericExtensions.rebuild] instead. '
+      'Will be removed in next major version')
+  CompleteTaskRequest copyWith(void Function(CompleteTaskRequest) updates) =>
+      super.copyWith((message) => updates(message as CompleteTaskRequest))
+          as CompleteTaskRequest;
+
+  $pb.BuilderInfo get info_ => _i;
+
+  @$core.pragma('dart2js:noInline')
+  static CompleteTaskRequest create() => CompleteTaskRequest._();
+  CompleteTaskRequest createEmptyInstance() => create();
+  static $pb.PbList<CompleteTaskRequest> createRepeated() =>
+      $pb.PbList<CompleteTaskRequest>();
+  @$core.pragma('dart2js:noInline')
+  static CompleteTaskRequest getDefault() => _defaultInstance ??=
+      $pb.GeneratedMessage.$_defaultFor<CompleteTaskRequest>(create);
+  static CompleteTaskRequest? _defaultInstance;
+
+  @$pb.TagNumber(1)
+  $core.String get taskId => $_getSZ(0);
+  @$pb.TagNumber(1)
+  set taskId($core.String v) {
+    $_setString(0, v);
+  }
+
+  @$pb.TagNumber(1)
+  $core.bool hasTaskId() => $_has(0);
+  @$pb.TagNumber(1)
+  void clearTaskId() => clearField(1);
+}
+
 class TaskResponse extends $pb.GeneratedMessage {
   factory TaskResponse({
     $core.String? id,

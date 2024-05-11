@@ -2,13 +2,11 @@ part of '../screens/team_screen.dart';
 
 class _AssignTaskForm extends StatefulWidget {
   const _AssignTaskForm({
-    required this.bloc,
     required this.scrollController,
     required this.task,
     required this.team,
   });
 
-  final TeamTaskBloc bloc;
   final TaskModel task;
   final TeamModel team;
   final ScrollController scrollController;
@@ -26,6 +24,9 @@ class _AssignTaskFormState extends State<_AssignTaskForm> with PlatformCheck {
   @override
   void initState() {
     super.initState();
+    widget.team.members.removeWhere((member) {
+      return widget.task.assignedUsers.contains(member);
+    });
     assignedUser = ValueNotifier(null);
     teamNameController = TextEditingController();
     teamDescriptionController = TextEditingController();
@@ -41,8 +42,10 @@ class _AssignTaskFormState extends State<_AssignTaskForm> with PlatformCheck {
 
   @override
   Widget build(BuildContext context) {
+    final theme = context.theme;
+
     return AnimatedPadding(
-      padding: const EdgeInsets.all(16).copyWith(
+      padding: EdgeInsets.all(Dimension.screenPadding).copyWith(
         bottom: MediaQuery.of(context).viewInsets.bottom,
       ),
       duration: const Duration(
@@ -66,12 +69,69 @@ class _AssignTaskFormState extends State<_AssignTaskForm> with PlatformCheck {
               ),
               ClipRRect(
                 borderRadius: BorderRadius.circular(Dimension.borderRadius),
-                child: UserExpandedDownButton(
+                child: ExpandedDownField<UserInfoModel>(
                   items: widget.team.members,
-                  chosenEntity: assignedUser.value,
-                  onChanged: (value) => setState(() {
+                  onChanged: (value) {
                     assignedUser.value = value;
-                  }),
+                    return value.userName;
+                  },
+                  suggestionFilter: (String search) {
+                    return widget.team.members
+                        .where(
+                          (element) =>
+                              element.userName
+                                  .toLowerCase()
+                                  .contains(search.toLowerCase()) ||
+                              search
+                                  .toLowerCase()
+                                  .contains(element.userName.toLowerCase()),
+                        )
+                        .toList();
+                  },
+                  itemBuilder: (
+                    BuildContext context,
+                    int index,
+                    List<UserInfoModel> items,
+                  ) {
+                    return Row(
+                      children: [
+                        const SizedBox(
+                          width: 12,
+                        ),
+                        ProfileAvatar(
+                          url:
+                              'http://kissota.ru:9600/file/users/${items[index].userName}/avatar.jpg',
+                          token: context.read<LoggedInState>().state!.token,
+                        ),
+                        const SizedBox(
+                          width: 12,
+                        ),
+                        Expanded(
+                          child: Padding(
+                            padding: EdgeInsets.only(
+                              right: context.screenWidth / 8,
+                            ),
+                            child: Column(
+                              mainAxisSize: MainAxisSize.min,
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Text(
+                                  items[index].userName,
+                                  overflow: TextOverflow.fade,
+                                  style: theme.textTheme.bodyMedium,
+                                ),
+                                Text(
+                                  items[index].role,
+                                  style: theme.textTheme.labelSmall,
+                                  overflow: TextOverflow.fade,
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ],
+                    );
+                  },
                 ),
               ),
               const SizedBox(
@@ -82,17 +142,17 @@ class _AssignTaskFormState extends State<_AssignTaskForm> with PlatformCheck {
                 child: ValueListenableBuilder(
                   valueListenable: assignedUser,
                   builder: (context, value, child) {
-                    return ElevatedButton.icon(
+                    return FilledButton.tonalIcon(
                       onPressed: value != null
                           ? () {
                               if (assignedUser.value != null) {
-                                widget.bloc.add(
-                                  TeamTaskEvent.assign(
-                                    taskId: widget.task.id,
-                                    teamId: widget.team.id,
-                                    userId: assignedUser.value!.id,
-                                  ),
-                                );
+                                context.read<TeamTaskBloc>().add(
+                                      TeamTaskEvent.assign(
+                                        taskId: widget.task.id,
+                                        teamId: widget.team.id,
+                                        userId: assignedUser.value!.id,
+                                      ),
+                                    );
                               }
                             }
                           : null,
@@ -100,7 +160,7 @@ class _AssignTaskFormState extends State<_AssignTaskForm> with PlatformCheck {
                         isCupertino ? CupertinoIcons.add : Icons.add,
                       ),
                       label: const Text(
-                        'Создать',
+                        'Назначить',
                       ),
                     );
                   },

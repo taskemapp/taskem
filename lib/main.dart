@@ -61,7 +61,7 @@ Future<void> main() async {
       widgetsBinding.allowFirstFrame();
       runApp(
         TranslationProvider(
-          child: MyApp(
+          child: App(
             result: result,
           ),
         ),

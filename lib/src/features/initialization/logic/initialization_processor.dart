@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:grpc/grpc.dart';
 import 'package:talker_flutter/talker_flutter.dart';
@@ -5,6 +7,8 @@ import 'package:taskem/src/features/authorization/controllers/auth_bloc.dart';
 import 'package:taskem/src/features/authorization/repositories/auth_repository.dart';
 import 'package:taskem/src/features/initialization/model/dependencies.dart';
 import 'package:taskem/src/features/initialization/model/environment_store.dart';
+import 'package:taskem/src/features/profile/controller/profile_bloc.dart';
+import 'package:taskem/src/features/profile/repositories/profile_repository.dart';
 import 'package:taskem/src/features/task/controller/task_bloc.dart';
 import 'package:taskem/src/features/task/repositories/task_repository.dart';
 import 'package:taskem/src/features/team/controller/specific_team/specific_team_bloc.dart';
@@ -13,6 +17,7 @@ import 'package:taskem/src/features/team/controller/teams/team_bloc.dart';
 import 'package:taskem/src/features/team/controller/user_teams/user_team_bloc.dart';
 import 'package:taskem/src/features/team/repositories/team_repository.dart';
 import 'package:taskem/src/generated/auth/auth.pbgrpc.dart';
+import 'package:taskem/src/generated/profile/profile.pbgrpc.dart';
 import 'package:taskem/src/generated/task/task.pbgrpc.dart';
 import 'package:taskem/src/generated/team/team.pbgrpc.dart';
 
@@ -31,12 +36,7 @@ final class InitializationProcessor {
   final Talker _talker;
 
   Future<Dependencies> _initDependencies() async {
-    const getAndroidOptions = AndroidOptions(
-      encryptedSharedPreferences: true,
-    );
-    const storage = FlutterSecureStorage(
-      aOptions: getAndroidOptions,
-    );
+    const storage = FlutterSecureStorage();
 
     final options = CallOptions(
       timeout: const Duration(
@@ -45,6 +45,8 @@ final class InitializationProcessor {
     );
 
     // final byte = await rootBundle.load(_environmentStore.certPath);
+
+    final httpClient = HttpClient();
 
     final channel = ClientChannel(
       _environmentStore.host,
@@ -83,39 +85,50 @@ final class InitializationProcessor {
       options: options,
     );
 
+    final profileService = ProfileClient(
+      channel,
+      options: options,
+    );
+
     final authBloc = await _initAuthBloc(
       authService,
       storage,
-      _environmentStore.storageSessionKey,
+      _environmentStore,
     );
 
     final teamBloc = await _initTeamBloc(
       teamService,
       storage,
-      _environmentStore.storageSessionKey,
+      _environmentStore.storageUserDataKey,
     );
     final userTeamBloc = await _initUserTeamBloc(
       teamService,
       storage,
-      _environmentStore.storageSessionKey,
+      _environmentStore.storageUserDataKey,
     );
 
     final specificTeamBloc = await _initSpecificTeamBloc(
       teamService,
       storage,
-      _environmentStore.storageSessionKey,
+      _environmentStore.storageUserDataKey,
     );
 
     final taskBloc = await _initTaskBloc(
       taskService,
       storage,
-      _environmentStore.storageSessionKey,
+      _environmentStore.storageUserDataKey,
     );
 
     final teamTaskBloc = await _initTeamTaskBloc(
       taskService,
       storage,
-      _environmentStore.storageSessionKey,
+      _environmentStore.storageUserDataKey,
+    );
+
+    final profileBloc = await _initProfileBloc(
+      profileService,
+      storage,
+      _environmentStore.storageUserDataKey,
     );
 
     return Dependencies(
@@ -125,18 +138,19 @@ final class InitializationProcessor {
       specificTeamBloc: specificTeamBloc,
       taskBloc: taskBloc,
       teamTaskBloc: teamTaskBloc,
+      profileBloc: profileBloc,
     );
   }
 
   Future<AuthBloc> _initAuthBloc(
     AuthClient stub,
     FlutterSecureStorage storage,
-    String storageSessionKey,
+    EnvironmentStore store,
   ) async {
     final authRepository = AuthRepository(
       channel: stub,
       storage: storage,
-      storageSessionKey: storageSessionKey,
+      store: store,
     );
     final authBloc = AuthBloc(authRepository: authRepository);
     return authBloc;
@@ -210,6 +224,20 @@ final class InitializationProcessor {
     );
     final teamTaskBloc = TeamTaskBloc(taskRepository: taskRepository);
     return teamTaskBloc;
+  }
+
+  Future<ProfileBloc> _initProfileBloc(
+    ProfileClient stub,
+    FlutterSecureStorage storage,
+    String storageSessionKey,
+  ) async {
+    final profileRepository = ProfileRepository(
+      stub: stub,
+      storage: storage,
+      storageSessionKey: storageSessionKey,
+    );
+    final profileBloc = ProfileBloc(profileRepository: profileRepository);
+    return profileBloc;
   }
 
   /// Method that starts the initialization process

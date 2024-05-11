@@ -1,0 +1,18 @@
+flutter_icons:
+  image_path: "assets/images/icon.png"
+  android: true
+  adaptive_icon_foreground: "assets/images/foreground-icon.png"
+  adaptive_icon_background: "assets/images/background-icon.png"
+  min_sdk_android: 21
+  ios: true
+  web:
+    generate: true
+    image_path: "assets/images/icon.png"
+    background_color: "#FFFFFF"
+  windows:
+    generate: true
+    image_path: "assets/images/icon.png"
+    icon_size: 48
+  macos:
+    generate: true
+    image_path: "assets/images/icon.png"

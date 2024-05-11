@@ -1,11 +1,34 @@
 part of '../screens/team_screen.dart';
 
-class _TeamLoaded extends StatelessWidget with PlatformCheck {
+class _TeamLoaded extends StatefulWidget {
   const _TeamLoaded({
     required this.team,
   });
 
   final TeamModel team;
+
+  @override
+  State<_TeamLoaded> createState() => _TeamLoadedState();
+}
+
+class _TeamLoadedState extends State<_TeamLoaded>
+    with SingleTickerProviderStateMixin, PlatformCheck {
+  late final TabController tabController;
+
+  @override
+  void initState() {
+    super.initState();
+    tabController = TabController(
+      length: 3,
+      vsync: this,
+    );
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    tabController.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -14,34 +37,41 @@ class _TeamLoaded extends StatelessWidget with PlatformCheck {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          team.name,
+          widget.team.name,
         ),
       ),
       floatingActionButton: FloatingActionButton.extended(
-        onPressed: () {
-          context.go(
+        onPressed: () async {
+          final created = await context.push<bool>(
             ScreenRouteBuilder()
                 .path(ScreenRoutes.team)
-                .param(team.id)
+                .param(widget.team.id)
                 .path(ScreenRoutes.createTask)
                 .build(),
-            extra: team.members,
+            extra: widget.team.members,
           );
+          if (created != null && created && context.mounted) {
+            context.read<TeamTaskBloc>().add(
+                  TeamTaskEvent.getTasks(
+                    teamId: widget.team.id,
+                  ),
+                );
+          }
         },
         icon: Icon(
           isCupertino ? CupertinoIcons.create : Icons.create,
         ),
         label: const Text(
-          'Создать задание',
+          'Создать задачу',
         ),
       ),
       body: RefreshIndicator(
         onRefresh: () async {
           context.read<SpecificTeamBloc>().add(
-                SpecificTeamEvent.getTeam(teamId: team.id),
+                SpecificTeamEvent.getTeam(teamId: widget.team.id),
               );
           context.read<TeamTaskBloc>().add(
-                TeamTaskEvent.getTasks(teamId: team.id),
+                TeamTaskEvent.getTasks(teamId: widget.team.id),
               );
         },
         child: Column(
@@ -64,7 +94,7 @@ class _TeamLoaded extends StatelessWidget with PlatformCheck {
                     height: 6,
                   ),
                   Text(
-                    team.description,
+                    widget.team.description,
                     style: theme.textTheme.bodyMedium,
                   ),
                   const SizedBox(
@@ -74,19 +104,62 @@ class _TeamLoaded extends StatelessWidget with PlatformCheck {
               ),
             ),
             Expanded(
-              child: BlocBuilder<TeamTaskBloc, TeamTaskState>(
+              child: BlocConsumer<TeamTaskBloc, TeamTaskState>(
+                listener: (context, state) {
+                  if (state is TeamTaskAssignPermissionDeniedError) {
+                    SnackBarService.error(
+                      context,
+                      'Нет прав, для назначения на задачу',
+                    );
+                  }
+                  if (state is TeamTaskAssignError) {
+                    SnackBarService.error(
+                      context,
+                      'Ошибка при назначении на задачу',
+                    );
+                  }
+                  if (state is TeamTaskCompleted) {
+                    SnackBarService.info(
+                      context,
+                      'Задача завершена',
+                    );
+                  }
+                  if (state is TeamTaskAssigned) {
+                    SnackBarService.info(
+                      context,
+                      'Пользователь назначен на задачу',
+                    );
+                    tabController.animateTo(1);
+                  }
+                },
+                buildWhen: (previous, current) =>
+                    current is! TeamTaskAssignError ||
+                    current is! TeamTaskAssignPermissionDeniedError ||
+                    current is! TeamTaskCompleted ||
+                    current is! TeamTaskAssigned,
                 builder: (context, state) => switch (state) {
-                  TeamTaskInitial() => const LoadingWidget(),
-                  TeamTaskLoaded(tasks: final tasks) => _BacklogWidget(
-                      tasks: tasks,
-                      team: team,
+                  TeamTaskInitial() => Animate(
+                      effects: const [
+                        FadeEffect(),
+                      ],
+                      child: const LoadingWidget(),
+                    ),
+                  TeamTaskLoaded(tasks: final tasks) => Animate(
+                      effects: const [
+                        FadeEffect(),
+                      ],
+                      child: _BacklogWidget(
+                        tasks: tasks,
+                        team: widget.team,
+                        tabController: tabController,
+                      ),
                     ),
                   _ => Center(
                       child: TryAgainButton(
                         onPressed: () {
                           context.read<TeamTaskBloc>().add(
                                 TeamTaskEvent.getTasks(
-                                  teamId: team.id,
+                                  teamId: widget.team.id,
                                 ),
                               );
                         },
@@ -119,7 +192,7 @@ class _TeamTaskCard extends StatelessWidget with PlatformCheck {
     String taskId,
     List<UserInfoModel> members,
   ) {
-    showFlexibleBottomSheet<TeamTaskEvent>(
+    showFlexibleBottomSheet<void>(
       context: context,
       initHeight: 0.5,
       maxHeight: 0.5,
@@ -130,11 +203,13 @@ class _TeamTaskCard extends StatelessWidget with PlatformCheck {
         scrollController,
         bottomSheetOffset,
       ) {
-        return _AssignTaskForm(
-          bloc: context.read<TeamTaskBloc>(),
-          scrollController: scrollController,
-          task: task,
-          team: team,
+        return Provider.value(
+          value: context.read<TeamTaskBloc>(),
+          child: _AssignTaskForm(
+            scrollController: scrollController,
+            task: task,
+            team: team,
+          ),
         );
       },
     );
@@ -145,6 +220,8 @@ class _TeamTaskCard extends StatelessWidget with PlatformCheck {
     final theme = context.theme;
 
     return Card(
+      color: theme.colorScheme.primaryContainer,
+      margin: EdgeInsets.zero,
       child: ListTile(
         enableFeedback: true,
         shape: RoundedRectangleBorder(

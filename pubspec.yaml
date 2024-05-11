@@ -50,19 +50,24 @@ dependencies:
   json_serializable:
   mask_text_input_formatter:
   build_runner:
+  flutter_slidable:
   flutter_adaptive_scaffold:
   flutter_staggered_animations:
   flutter_secure_storage:
   flutter_markdown:
+  cached_network_image:
   provider:
+  image_cropper:
+  image_picker:
+  flutter_image_compress:
   skeletonizer:
   table_calendar:
   dynamic_color:
   rxdart:
-# logging
+  # logging
   talker_flutter:
   talker_bloc_logger:
-# localization
+  # localization
   intl:
   slang:
   slang_flutter:
@@ -76,10 +81,13 @@ dev_dependencies:
   # activated in the `analysis_options.yaml` file located at the root of your
   # package. See that file for information about deactivating specific lint
   # rules and activating additional ones.
+  dart_code_metrics:
+  flutter_launcher_icons:
   flutter_gen_runner:
   very_good_analysis:
   slang_build_runner:
-  dart_code_metrics:
+  golden_toolkit:
+  slang_gpt:
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
@@ -94,8 +102,8 @@ flutter:
 
   # To add assets to your application, add an assets section, like this:
   assets:
-   - assets/images/
-   - assets/ca.crt
+    - assets/images/
+    - assets/ca.crt
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware

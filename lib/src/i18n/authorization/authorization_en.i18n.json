@@ -5,6 +5,9 @@
     "password": "Password",
     "repeatPassword": "Repeat Password"
   },
+  "error": {
+    "wrongPasswordOrEmail": "Incorrect password or email"
+  },
   "accountCreated": "Account successfully created",
   "login": "Log in",
   "noAccount": "Don't have an account?",

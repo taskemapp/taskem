@@ -3,6 +3,7 @@ import 'package:meta/meta.dart';
 import 'package:taskem/src/features/shared/model/user_info_model.dart';
 import 'package:taskem/src/features/task/models/create_task_model.dart';
 import 'package:taskem/src/features/task/models/task_model.dart';
+import 'package:taskem/src/features/task/repositories/error.dart';
 import 'package:taskem/src/features/task/repositories/task_repository.dart';
 
 part 'task_event.dart';
@@ -33,6 +34,7 @@ class TaskBloc extends Bloc<TaskEvent, TaskState> {
       emit(TaskState.loaded(tasks: response));
     } catch (_) {
       emit(const TaskState.error());
+      rethrow;
     }
   }
 
@@ -48,6 +50,7 @@ class TaskBloc extends Bloc<TaskEvent, TaskState> {
       emit(const TaskState.created());
     } catch (_) {
       emit(const TaskState.error());
+      rethrow;
     }
   }
 
@@ -61,8 +64,12 @@ class TaskBloc extends Bloc<TaskEvent, TaskState> {
         event.taskModel,
       );
       emit(const TaskState.created());
+    } on TaskRepositoryPermissionDeniedError catch (_) {
+      emit(const TaskState.permissionDenied());
+      rethrow;
     } catch (_) {
       emit(const TaskState.error());
+      rethrow;
     }
   }
 }

@@ -47,8 +47,8 @@ class _UserTeamScreenState extends State<UserTeamScreen>
                 const UserTeamEvent.getUserTeams(),
               ),
           child: Padding(
-            padding: EdgeInsets.symmetric(
-              horizontal: Dimension.screenPadding,
+            padding: EdgeInsets.all(
+              Dimension.screenPadding,
             ),
             child: BlocListener<TeamBloc, TeamState>(
               listener: (context, state) {
@@ -68,14 +68,19 @@ class _UserTeamScreenState extends State<UserTeamScreen>
                             itemCount: teams.length,
                             itemBuilder: (context, index) {
                               final team = teams[index];
-                              return TeamCard(
-                                onCardPressed: () => context.push(
-                                  ScreenRouteBuilder()
-                                      .path(ScreenRoutes.team)
-                                      .param(team.id)
-                                      .build(),
+                              return Padding(
+                                padding: EdgeInsets.only(
+                                  bottom: Dimension.screenPadding,
                                 ),
-                                team: team,
+                                child: TeamCard(
+                                  onCardPressed: () => context.push(
+                                    ScreenRouteBuilder()
+                                        .path(ScreenRoutes.team)
+                                        .param(team.id)
+                                        .build(),
+                                  ),
+                                  team: team,
+                                ),
                               );
                             },
                           ),
@@ -131,9 +136,9 @@ class _UserTeamScreenState extends State<UserTeamScreen>
                     UserTeamInitial() => const LoadingWidget(),
                     _ => Center(
                         child: TryAgainButton(
-                          onPressed: () => context
-                              .read<UserTeamBloc>()
-                              .add(const UserTeamEvent.getUserTeams()),
+                          onPressed: () => context.read<UserTeamBloc>().add(
+                                const UserTeamEvent.getUserTeams(),
+                              ),
                         ),
                       ),
                   };

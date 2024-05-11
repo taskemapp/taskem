@@ -1,7 +1,9 @@
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:grpc/grpc.dart';
 import 'package:taskem/src/core/helpers/session_mixin.dart';
 import 'package:taskem/src/features/task/models/create_task_model.dart';
 import 'package:taskem/src/features/task/models/task_model.dart';
+import 'package:taskem/src/features/task/repositories/error.dart';
 import 'package:taskem/src/generated/task/google/protobuf/empty.pb.dart';
 import 'package:taskem/src/generated/task/google/protobuf/timestamp.pb.dart';
 import 'package:taskem/src/generated/task/task.pbgrpc.dart';
@@ -36,6 +38,14 @@ class TaskRepository with Session {
         request,
         options: option,
       );
+    } on GrpcError catch (e, st) {
+      if (e.code == StatusCode.permissionDenied) {
+        Error.throwWithStackTrace(
+          TaskRepositoryError.permissionDenied(),
+          st,
+        );
+      }
+      rethrow;
     } catch (_) {
       rethrow;
     }
@@ -70,8 +80,19 @@ class TaskRepository with Session {
         options: option,
       );
       return response.tasks.map(TaskModel.from).toList();
-    } catch (_) {
+    } on GrpcError catch (e, st) {
+      if (e.code == StatusCode.permissionDenied) {
+        Error.throwWithStackTrace(
+          TaskRepositoryError.permissionDenied(),
+          st,
+        );
+      }
       rethrow;
+    } catch (e, st) {
+      Error.throwWithStackTrace(
+        TaskRepositoryError.getAllForTeam(),
+        st,
+      );
     }
   }
 
@@ -86,6 +107,23 @@ class TaskRepository with Session {
         options: option,
       );
       return TaskModel.from(response);
+    } catch (_) {
+      rethrow;
+    }
+  }
+
+  Future<void> complete(String taskId) async {
+    try {
+      final option = await getOption(
+        _storage,
+        _storageSessionKey,
+      );
+      await _stub.complete(
+        CompleteTaskRequest(
+          taskId: taskId,
+        ),
+        options: option,
+      );
     } catch (_) {
       rethrow;
     }

@@ -12,9 +12,11 @@ sealed class TeamState {
 
   const factory TeamState.error(String message) = TeamError;
 
+  const factory TeamState.joinError(String message) = TeamJoinError;
+
   const factory TeamState.created(String message) = TeamCreated;
 
-  const factory TeamState.joined(String message) = TeamError;
+  const factory TeamState.joined(String message) = TeamJoined;
 }
 
 final class TeamInitial extends TeamState {
@@ -29,6 +31,12 @@ final class TeamsLoaded extends TeamState {
   const TeamsLoaded(this.teams);
 
   final List<TeamModel> teams;
+}
+
+final class TeamJoinError extends TeamState {
+  const TeamJoinError(this.message);
+
+  final String message;
 }
 
 final class TeamError extends TeamState {

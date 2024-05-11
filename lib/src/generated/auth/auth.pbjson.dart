@@ -31,7 +31,7 @@ final $typed_data.Uint8List loginRequestDescriptor = $convert.base64Decode(
 const LoginResponse$json = {
   '1': 'LoginResponse',
   '2': [
-    {'1': 'success', '3': 1, '4': 1, '5': 8, '10': 'success'},
+    {'1': 'user_name', '3': 1, '4': 1, '5': 9, '10': 'userName'},
     {'1': 'message', '3': 2, '4': 1, '5': 9, '10': 'message'},
     {'1': 'session_id', '3': 3, '4': 1, '5': 9, '10': 'sessionId'},
   ],
@@ -39,8 +39,8 @@ const LoginResponse$json = {
 
 /// Descriptor for `LoginResponse`. Decode as a `google.protobuf.DescriptorProto`.
 final $typed_data.Uint8List loginResponseDescriptor = $convert.base64Decode(
-    'Cg1Mb2dpblJlc3BvbnNlEhgKB3N1Y2Nlc3MYASABKAhSB3N1Y2Nlc3MSGAoHbWVzc2FnZRgCIA'
-    'EoCVIHbWVzc2FnZRIdCgpzZXNzaW9uX2lkGAMgASgJUglzZXNzaW9uSWQ=');
+    'Cg1Mb2dpblJlc3BvbnNlEhsKCXVzZXJfbmFtZRgBIAEoCVIIdXNlck5hbWUSGAoHbWVzc2FnZR'
+    'gCIAEoCVIHbWVzc2FnZRIdCgpzZXNzaW9uX2lkGAMgASgJUglzZXNzaW9uSWQ=');
 
 @$core.Deprecated('Use logoutRequestDescriptor instead')
 const LogoutRequest$json = {

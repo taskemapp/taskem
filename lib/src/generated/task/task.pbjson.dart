@@ -68,6 +68,18 @@ final $typed_data.Uint8List assignTaskRequestDescriptor = $convert.base64Decode(
     'ChFBc3NpZ25UYXNrUmVxdWVzdBIXCgd0YXNrX2lkGAEgASgJUgZ0YXNrSWQSFwoHdXNlcl9pZB'
     'gCIAEoCVIGdXNlcklk');
 
+@$core.Deprecated('Use completeTaskRequestDescriptor instead')
+const CompleteTaskRequest$json = {
+  '1': 'CompleteTaskRequest',
+  '2': [
+    {'1': 'task_id', '3': 1, '4': 1, '5': 9, '10': 'taskId'},
+  ],
+};
+
+/// Descriptor for `CompleteTaskRequest`. Decode as a `google.protobuf.DescriptorProto`.
+final $typed_data.Uint8List completeTaskRequestDescriptor = $convert.base64Decode(
+    'ChNDb21wbGV0ZVRhc2tSZXF1ZXN0EhcKB3Rhc2tfaWQYASABKAlSBnRhc2tJZA==');
+
 @$core.Deprecated('Use taskResponseDescriptor instead')
 const TaskResponse$json = {
   '1': 'TaskResponse',

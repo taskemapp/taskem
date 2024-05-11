@@ -1,6 +1,7 @@
 import 'package:bloc/bloc.dart';
 import 'package:meta/meta.dart';
 import 'package:taskem/src/features/task/models/task_model.dart';
+import 'package:taskem/src/features/task/repositories/error.dart';
 import 'package:taskem/src/features/task/repositories/task_repository.dart';
 
 part 'team_task_event.dart';
@@ -14,6 +15,7 @@ class TeamTaskBloc extends Bloc<TeamTaskEvent, TeamTaskState> {
       (event, emit) => switch (event) {
         _GetTeamTasksEvent() => _onGetTeamTasksEvent(event, emit),
         _AssignTeamTasksEvent() => _onAssignTeamTask(event, emit),
+        _CompleteTaskEvent() => _onCompleteTeamTask(event, emit),
       },
     );
   }
@@ -39,6 +41,23 @@ class TeamTaskBloc extends Bloc<TeamTaskEvent, TeamTaskState> {
     }
   }
 
+  Future<void> _onCompleteTeamTask(
+    _CompleteTaskEvent event,
+    Emitter<TeamTaskState> emit,
+  ) async {
+    try {
+      await _taskRepository.complete(
+        event.taskId,
+      );
+      emit(
+        const TeamTaskState.completed(),
+      );
+    } catch (_) {
+      emit(const TeamTaskState.error());
+      rethrow;
+    }
+  }
+
   Future<void> _onAssignTeamTask(
     _AssignTeamTasksEvent event,
     Emitter<TeamTaskState> emit,
@@ -48,14 +67,22 @@ class TeamTaskBloc extends Bloc<TeamTaskEvent, TeamTaskState> {
         event.taskId,
         event.userId,
       );
-      final response = await _taskRepository.getAllForTeam(
-        event.teamId,
+      emit(
+        const TeamTaskState.assign(),
       );
+      final response = await _taskRepository.getAllForTeam(event.teamId);
       emit(
         TeamTaskState.loaded(tasks: response),
       );
-    } catch (_) {
+    } on TaskRepositoryPermissionDeniedError catch (_) {
       emit(const TeamTaskState.error());
+      rethrow;
+    } on TaskRepositoryGetAllForTeamError catch (_) {
+      emit(const TeamTaskState.assignPermissionDeniedError());
+      rethrow;
+    } catch (_) {
+      emit(const TeamTaskState.assignError());
+      rethrow;
     }
   }
 }

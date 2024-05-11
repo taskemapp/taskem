@@ -1,0 +1,40 @@
+### Meta ###
+From: <ru> lib/src/i18n/authorization/authorization_ru.i18n.json
+To: <en> lib/src/i18n/authorization/authorization_en.i18n.json
+
+### Tokens ###
+Input: 141
+Output: 13
+Total: 154
+
+### Conversation ###
+
+>> System:
+The user wants to internationalize the "authorization" part of the app. The user will provide you with a JSON file containing the Russian strings.
+You will translate it to English.
+Parameters are interpolated with ${parameter} or $parameter.
+Linked translations are denoted with the "@:path0.path1" syntax.
+
+Here is the app description. Respect this context when translating:
+"Taskem - это приложения для управления задачами в организациях работющих по методологии Scrum."
+
+>> User:
+{"error":{"wrongPasswordOrEmail":"Неверный пароль или эл. почта"}}
+
+>> Assistant:
+{"error":{"wrongPasswordOrEmail":"Incorrect password or email"}}
+
+### JSON ###
+Input:
+{
+  "error": {
+    "wrongPasswordOrEmail": "Неверный пароль или эл. почта"
+  }
+}
+
+Output:
+{
+  "error": {
+    "wrongPasswordOrEmail": "Incorrect password or email"
+  }
+}

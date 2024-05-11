@@ -78,7 +78,13 @@ class _CreateTaskScreenState extends State<CreateTaskScreen>
             listener: (BuildContext context, TaskState state) {
               if (state is TaskCreated) {
                 SnackBarService.info(context, 'Задача создана');
-                context.pop();
+                context.pop(true);
+              }
+              if (state is TaskPermissionDenied) {
+                SnackBarService.error(context, 'Недостаточно прав');
+              }
+              if (state is TaskError) {
+                SnackBarService.error(context, 'Ошибка создания задачи');
               }
             },
             child: Form(

@@ -6,3 +6,8 @@ output_directory: lib/src/i18n
 output_file_name: translations.g.dart
 namespaces: true
 output_format: multiple_files
+
+gpt:
+  model: gpt-4
+  description: |
+    "Taskem - это приложения для управления задачами в организациях работющих по методологии Scrum."

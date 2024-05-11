@@ -1,4 +1,5 @@
 import 'package:taskem/src/features/authorization/controllers/auth_bloc.dart';
+import 'package:taskem/src/features/profile/controller/profile_bloc.dart';
 import 'package:taskem/src/features/task/controller/task_bloc.dart';
 import 'package:taskem/src/features/team/controller/specific_team/specific_team_bloc.dart';
 import 'package:taskem/src/features/team/controller/team_task/team_task_bloc.dart';
@@ -17,6 +18,7 @@ base class Dependencies {
     required this.userTeamBloc,
     required this.specificTeamBloc,
     required this.teamTaskBloc,
+    required this.profileBloc,
   });
 
   /// [AuthBloc] instance, used to manage auth.
@@ -26,6 +28,7 @@ base class Dependencies {
   final UserTeamBloc userTeamBloc;
   final SpecificTeamBloc specificTeamBloc;
   final TeamTaskBloc teamTaskBloc;
+  final ProfileBloc profileBloc;
 }
 
 /// {@template initialization_result}

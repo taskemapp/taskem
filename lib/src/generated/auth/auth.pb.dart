@@ -79,13 +79,13 @@ class LoginRequest extends $pb.GeneratedMessage {
 
 class LoginResponse extends $pb.GeneratedMessage {
   factory LoginResponse({
-    $core.bool? success,
+    $core.String? userName,
     $core.String? message,
     $core.String? sessionId,
   }) {
     final $result = create();
-    if (success != null) {
-      $result.success = success;
+    if (userName != null) {
+      $result.userName = userName;
     }
     if (message != null) {
       $result.message = message;
@@ -100,7 +100,7 @@ class LoginResponse extends $pb.GeneratedMessage {
   factory LoginResponse.fromJson($core.String i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromJson(i, r);
 
   static final $pb.BuilderInfo _i = $pb.BuilderInfo(_omitMessageNames ? '' : 'LoginResponse', package: const $pb.PackageName(_omitMessageNames ? '' : 'auth'), createEmptyInstance: create)
-    ..aOB(1, _omitFieldNames ? '' : 'success')
+    ..aOS(1, _omitFieldNames ? '' : 'userName')
     ..aOS(2, _omitFieldNames ? '' : 'message')
     ..aOS(3, _omitFieldNames ? '' : 'sessionId')
     ..hasRequiredFields = false
@@ -128,13 +128,13 @@ class LoginResponse extends $pb.GeneratedMessage {
   static LoginResponse? _defaultInstance;
 
   @$pb.TagNumber(1)
-  $core.bool get success => $_getBF(0);
+  $core.String get userName => $_getSZ(0);
   @$pb.TagNumber(1)
-  set success($core.bool v) { $_setBool(0, v); }
+  set userName($core.String v) { $_setString(0, v); }
   @$pb.TagNumber(1)
-  $core.bool hasSuccess() => $_has(0);
+  $core.bool hasUserName() => $_has(0);
   @$pb.TagNumber(1)
-  void clearSuccess() => clearField(1);
+  void clearUserName() => clearField(1);
 
   @$pb.TagNumber(2)
   $core.String get message => $_getSZ(1);

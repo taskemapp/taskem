@@ -18,9 +18,16 @@ class EnvironmentStore {
         const String.fromEnvironment('PORT'),
       );
 
+  String get fileStorageHost =>
+      const String.fromEnvironment('FILE_STORAGE_HOST');
+
+  int get fileStoragePort => int.parse(
+        const String.fromEnvironment('FILE_STORAGE_PORT'),
+      );
+
   ///Secure storage session key
-  String get storageSessionKey =>
-      const String.fromEnvironment('STORAGE_SESSION_KEY');
+  String get storageUserDataKey =>
+      const String.fromEnvironment('STORAGE_USER_DATA_KEY');
 
   ///Grpc server certificate path
   String get certPath => const String.fromEnvironment('PATH_TO_CERT');

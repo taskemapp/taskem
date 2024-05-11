@@ -4,6 +4,7 @@ import 'package:taskem/src/features/team/models/create_team_model.dart';
 import 'package:taskem/src/features/team/models/created_team.dart';
 import 'package:taskem/src/features/team/models/role_model.dart';
 import 'package:taskem/src/features/team/models/team_model.dart';
+import 'package:taskem/src/features/team/repositories/error.dart';
 import 'package:taskem/src/generated/team/google/protobuf/empty.pb.dart';
 import 'package:taskem/src/generated/team/team.pbgrpc.dart';
 
@@ -111,8 +112,11 @@ class TeamRepository with Session {
         options: option,
       );
       return response.message;
-    } catch (_) {
-      rethrow;
+    } catch (e, st) {
+      Error.throwWithStackTrace(
+        TeamRepositoryError.join(message: e.toString()),
+        st,
+      );
     }
   }
 

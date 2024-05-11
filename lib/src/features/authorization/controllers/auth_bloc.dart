@@ -1,6 +1,7 @@
 import 'package:bloc/bloc.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:grpc/grpc.dart';
+import 'package:taskem/src/app.dart';
 import 'package:taskem/src/core/helpers/session_mixin.dart';
 import 'package:taskem/src/features/authorization/models/login_model.dart';
 import 'package:taskem/src/features/authorization/models/sign_up_model.dart';
@@ -37,7 +38,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> with Session {
       final email = event.email;
       final password = event.password;
 
-      final sessionId = await _authRepository.login(
+      final userData = await _authRepository.login(
         LoginModel(
           email: email,
           password: password,
@@ -45,7 +46,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> with Session {
       );
       emit(
         AuthState.successLogin(
-          sessionId: sessionId,
+          userData: userData,
         ),
       );
     } on GrpcError catch (e) {

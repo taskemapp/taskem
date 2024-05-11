@@ -1,45 +1,62 @@
 import 'package:flutter/material.dart';
 import 'package:taskem/src/core/extensions/context_extension.dart';
 import 'package:taskem/src/core/extensions/theme_extension.dart';
+import 'package:taskem/src/core/helpers/animation_config.dart';
 import 'package:taskem/src/core/helpers/dimension.dart';
 import 'package:taskem/src/core/helpers/throttler.dart';
 import 'package:taskem/src/core/widgets/custom_text_field.dart';
-import 'package:taskem/src/features/shared/model/user_info_model.dart';
 
-class UserExpandedDownButton extends StatefulWidget {
-  const UserExpandedDownButton({
+@immutable
+class ExpandedDownField<T> extends StatefulWidget {
+  ExpandedDownField({
     required this.items,
     required this.onChanged,
+    required this.suggestionFilter,
+    required this.itemBuilder,
+    this.showedItems = 3,
+    this.itemHeight = 60,
     this.onTap,
-    this.chosenEntity,
     super.key,
   });
 
-  final List<UserInfoModel> items;
-  final UserInfoModel? chosenEntity;
-  final void Function(UserInfoModel value) onChanged;
+  final List<T> items;
+
+  final String? Function(T value) onChanged;
+
+  final double itemHeight;
+  final double showedItems;
+
+  final Widget Function(
+    BuildContext context,
+    int index,
+    List<T> items,
+  ) itemBuilder;
+
+  final List<T> Function(String search) suggestionFilter;
+
   final void Function(bool isOpen)? onTap;
 
+  Color? fillColor;
+
   @override
-  State<UserExpandedDownButton> createState() => _UserExpandedDownButtonState();
+  State<ExpandedDownField<T>> createState() => _ExpandedDownFieldState();
 }
 
-class _UserExpandedDownButtonState extends State<UserExpandedDownButton>
+class _ExpandedDownFieldState<T> extends State<ExpandedDownField<T>>
     with SingleTickerProviderStateMixin {
-  UserInfoModel? chosenEntity;
-  late ValueNotifier<List<UserInfoModel>> itemList;
+  late ValueNotifier<List<T>> itemList;
   late AnimationController controller;
   late Animation<double> animation;
   late TextEditingController textEditingController;
   late ScrollController scrollController;
   late final ValueNotifier<bool> isOpen;
-  final itemHeight = 60.0;
 
   @override
   void initState() {
     controller = AnimationController(
       vsync: this,
-      duration: const Duration(milliseconds: 300),
+      duration: AnimationConfig.duration,
+      reverseDuration: AnimationConfig.reverseDuration,
     );
     textEditingController = TextEditingController();
 
@@ -53,17 +70,8 @@ class _UserExpandedDownButtonState extends State<UserExpandedDownButton>
         Future.delayed(
           const Duration(microseconds: 1),
           () {
-            final findList = widget.items
-                .where(
-                  (element) =>
-                      element.userName
-                          .toLowerCase()
-                          .contains(textEditingController.text.toLowerCase()) ||
-                      textEditingController.text
-                          .toLowerCase()
-                          .contains(element.userName.toLowerCase()),
-                )
-                .toList();
+            final findList =
+                widget.suggestionFilter(textEditingController.text);
             final list = widget.items.toList();
             for (var i = 0; i < findList.length; i++) {
               list.remove(findList[i]);
@@ -74,7 +82,12 @@ class _UserExpandedDownButtonState extends State<UserExpandedDownButton>
         );
       },
     );
-    animation = Tween<double>(begin: 0, end: 1).animate(controller);
+    animation = Tween<double>(begin: 0, end: 1).animate(
+      CurvedAnimation(
+        parent: controller,
+        curve: AnimationConfig.curve,
+      ),
+    );
     super.initState();
   }
 
@@ -82,6 +95,7 @@ class _UserExpandedDownButtonState extends State<UserExpandedDownButton>
   void dispose() {
     controller.dispose();
     scrollController.dispose();
+    textEditingController.dispose();
     itemList.dispose();
     isOpen.dispose();
     super.dispose();
@@ -97,10 +111,10 @@ class _UserExpandedDownButtonState extends State<UserExpandedDownButton>
   }
 
   double calculateExpandedHeight(int itemsCount) {
-    if (itemsCount > 3) {
-      return itemHeight * 3;
+    if (itemsCount > widget.showedItems) {
+      return widget.itemHeight * widget.showedItems;
     }
-    return itemHeight * itemsCount;
+    return widget.itemHeight * itemsCount;
   }
 
   void onTap() {
@@ -121,19 +135,14 @@ class _UserExpandedDownButtonState extends State<UserExpandedDownButton>
     });
   }
 
-  void onItemTap(UserInfoModel entity) {
+  void onItemTap(T entity) {
     setState(
       () {
-        chosenEntity = entity;
+        final text = widget.onChanged(entity);
+        if (text != null) {
+          textEditingController.text = text;
+        }
         isOpen.value = false;
-        widget.onChanged(entity);
-        textEditingController
-          ..text = entity.userName
-          ..selection = TextSelection.fromPosition(
-            TextPosition(
-              offset: textEditingController.text.length,
-            ),
-          );
         iconAnimation();
         FocusScope.of(context).unfocus();
       },
@@ -146,7 +155,8 @@ class _UserExpandedDownButtonState extends State<UserExpandedDownButton>
   Widget build(BuildContext context) {
     final size = MediaQuery.sizeOf(context);
     final theme = context.theme;
-    final fillColor = theme.isDark ? const Color(0xFF313131) : Colors.white;
+    final fillColor = widget.fillColor ??=
+        theme.isDark ? const Color(0xFF313131) : Colors.white;
 
     return Column(
       mainAxisSize: MainAxisSize.min,
@@ -203,10 +213,11 @@ class _UserExpandedDownButtonState extends State<UserExpandedDownButton>
                 child: AnimatedOpacity(
                   opacity: isOpen.value ? 1.0 : 0.0,
                   duration: const Duration(milliseconds: 300),
-                  child: Scrollbar(
-                    child: ValueListenableBuilder(
-                      valueListenable: itemList,
-                      builder: (context, value, child) => CustomScrollView(
+                  child: ValueListenableBuilder(
+                    valueListenable: itemList,
+                    builder: (context, value, child) => Scrollbar(
+                      controller: scrollController,
+                      child: CustomScrollView(
                         physics: const ClampingScrollPhysics(),
                         controller: scrollController,
                         slivers: [
@@ -215,28 +226,22 @@ class _UserExpandedDownButtonState extends State<UserExpandedDownButton>
                             itemBuilder: (context, index) => Material(
                               color: Colors.transparent,
                               child: SizedBox(
-                                height: itemHeight,
+                                height: widget.itemHeight,
                                 child: Padding(
                                   padding: const EdgeInsets.all(6).copyWith(
-                                    bottom: index != value.length - 1 ? 0 : 6,
+                                    top: 0,
+                                    bottom: 6,
                                   ),
-                                  child: TextButton(
+                                  child: FilledButton.tonal(
                                     onPressed: () => onItemTap(value[index]),
                                     style: TextButton.styleFrom(
                                       padding: EdgeInsets.zero,
                                     ),
-                                    child: index == 0
-                                        ? Text(
-                                            value[index].userName,
-                                            overflow: TextOverflow.fade,
-                                          )
-                                        : Text(
-                                            value[index].userName,
-                                            style: TextStyle(
-                                              color: Colors.grey.shade500,
-                                            ),
-                                            overflow: TextOverflow.fade,
-                                          ),
+                                    child: widget.itemBuilder(
+                                      context,
+                                      index,
+                                      value,
+                                    ),
                                   ),
                                 ),
                               ),

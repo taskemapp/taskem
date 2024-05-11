@@ -20,15 +20,19 @@ class TeamCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = context.theme;
+    final shape = RoundedRectangleBorder(
+      borderRadius: BorderRadius.circular(
+        Dimension.borderRadius,
+      ),
+    );
 
     return Card(
+      color: theme.colorScheme.primaryContainer,
+      margin: EdgeInsets.zero,
+      shape: shape,
       child: ListTile(
         enableFeedback: true,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(
-            Dimension.borderRadius,
-          ),
-        ),
+        shape: shape,
         onTap: onCardPressed,
         title: Text(
           team.name,

@@ -46,6 +46,10 @@ class TaskClient extends $grpc.Client {
       '/task.Task/Assign',
       ($2.AssignTaskRequest value) => value.writeToBuffer(),
       ($core.List<$core.int> value) => $2.TaskResponse.fromBuffer(value));
+  static final _$complete = $grpc.ClientMethod<$2.CompleteTaskRequest, $1.Empty>(
+      '/task.Task/Complete',
+      ($2.CompleteTaskRequest value) => value.writeToBuffer(),
+      ($core.List<$core.int> value) => $1.Empty.fromBuffer(value));
 
   TaskClient($grpc.ClientChannel channel,
       {$grpc.CallOptions? options,
@@ -75,6 +79,10 @@ class TaskClient extends $grpc.Client {
 
   $grpc.ResponseFuture<$2.TaskResponse> assign($2.AssignTaskRequest request, {$grpc.CallOptions? options}) {
     return $createUnaryCall(_$assign, request, options: options);
+  }
+
+  $grpc.ResponseFuture<$1.Empty> complete($2.CompleteTaskRequest request, {$grpc.CallOptions? options}) {
+    return $createUnaryCall(_$complete, request, options: options);
   }
 }
 
@@ -125,6 +133,13 @@ abstract class TaskServiceBase extends $grpc.Service {
         false,
         ($core.List<$core.int> value) => $2.AssignTaskRequest.fromBuffer(value),
         ($2.TaskResponse value) => value.writeToBuffer()));
+    $addMethod($grpc.ServiceMethod<$2.CompleteTaskRequest, $1.Empty>(
+        'Complete',
+        complete_Pre,
+        false,
+        false,
+        ($core.List<$core.int> value) => $2.CompleteTaskRequest.fromBuffer(value),
+        ($1.Empty value) => value.writeToBuffer()));
   }
 
   $async.Future<$1.Empty> create_Pre($grpc.ServiceCall call, $async.Future<$2.CreateTaskRequest> request) async {
@@ -151,10 +166,15 @@ abstract class TaskServiceBase extends $grpc.Service {
     return assign(call, await request);
   }
 
+  $async.Future<$1.Empty> complete_Pre($grpc.ServiceCall call, $async.Future<$2.CompleteTaskRequest> request) async {
+    return complete(call, await request);
+  }
+
   $async.Future<$1.Empty> create($grpc.ServiceCall call, $2.CreateTaskRequest request);
   $async.Future<$2.GetAllResponse> getAll($grpc.ServiceCall call, $1.Empty request);
   $async.Future<$2.GetAllResponse> getAllForTeam($grpc.ServiceCall call, $2.GetTeamTasksRequest request);
   $async.Future<$2.GetAllResponse> getAllForUser($grpc.ServiceCall call, $1.Empty request);
   $async.Future<$2.TaskResponse> get($grpc.ServiceCall call, $2.GetTaskRequest request);
   $async.Future<$2.TaskResponse> assign($grpc.ServiceCall call, $2.AssignTaskRequest request);
+  $async.Future<$1.Empty> complete($grpc.ServiceCall call, $2.CompleteTaskRequest request);
 }
